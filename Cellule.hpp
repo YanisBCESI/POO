@@ -1,8 +1,12 @@
+#ifndef CELLULE_HPP
+#define CELLULE_HPP
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <iostream>
+#include "grille.hpp"
+#include "CalculEtatCellule.hpp"
 using namespace std;
 
 class Cellule{
@@ -60,3 +64,4 @@ class CelluleVivante : public Cellule{
             throw runtime_error("Cellule vivante possède trop (peu) de voisins vivants");
         }
 };
+#endif
