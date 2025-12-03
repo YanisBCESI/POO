@@ -6,7 +6,6 @@
 #include <string>
 #include <iostream>
 #include "Cellule.hpp"
-#include "CalculEtatCellule.hpp"
 #include <time.h>
 using namespace std;
 
@@ -25,19 +24,27 @@ class Grille{
             for(int i = 0; i < h; i++){
                 cellules.push_back(vector<Cellule*>());
                 for(int j =0; j<l; j++){
-                    int state = rand() %2;
-                    if(state == 0){
+                    int state = rand() %4;
+                    if(state != 0){
                         CelluleMorte *a = new CelluleMorte(i, j);
                         cellules[i].push_back(a);
                     }
-                    if(state == 1){
+                    if(state == 0){
                         CelluleVivante *a = new CelluleVivante(i, j);
+                        cellules[i].push_back(a);
+
                     }
                 }
             }
         }/*Constructeur avec tableau de cellules aléatoirement définies*/
-        vector<vector<Cellule*>> getGrille(){
+        vector<vector<Cellule*>> &getGrille(){
             return cellules;
+        }
+        int getHauteur(){
+            return hauteur_grille;
+        }
+        int getLargeur(){
+            return largeur_grille;
         }
         void miseAJour(vector <vector <Cellule*>> nouvtab){
             if(nouvtab.size() == hauteur_grille && nouvtab[0].size() == largeur_grille){
@@ -47,7 +54,6 @@ class Grille{
                 throw runtime_error("Taille entre le nouveau tableau et le tableau original différentes.");
             }
         }/*Met a jour le tableau de vecteurs contenu dans la classe*/
-        void affichage(){} /*Je te laisse le soin de voir comment tu veux l'implémenter Nathan.*/
         void reinitialiserGrille(){
             for(int i =0; i<cellules.size(); i++){
                 for(int j=0; j<cellules[i].size(); j++){

@@ -6,7 +6,6 @@
 #include <string>
 #include <iostream>
 #include "Cellule.hpp"
-#include "grille.hpp"
 using namespace std;
 
 class CalculEtatCellule{
@@ -18,47 +17,45 @@ class CalculEtatCellule{
             TotalCellules = grille_maj;
         }
         vector<vector<Cellule *>> CalculGrille(){
-            int compteur_voisins;
-            for(int i = 0; i < TotalCellules.size(); i++){
-                for(int j = 0; j < TotalCellules[i].size(); j++){
-                    compteur_voisins = 0;
-                    for(int horizontale = i-1 ; horizontale <= i +1; horizontale ++){
-                        if(horizontale < 0){
-                            horizontale = TotalCellules.size()-1;
-                        }
-                        if(horizontale > TotalCellules.size()-1){
-                            horizontale = 0;
-                        }
-                        for(int verticale = j-1; verticale <= j+1; verticale ++){
-                            if(verticale < 0){
-                                verticale = TotalCellules.size()-1;
-                            }
-                            if(verticale > TotalCellules.size()-1){
-                                verticale = 0;
-                            }
-                            if(i, j == horizontale, verticale){
-                                verticale ++;
-                            }
-                            if(TotalCellules[horizontale][verticale]->estVivante()){
-                                compteur_voisins++;
-                            }
+            int hauteur = TotalCellules.size();
+            int largeur = TotalCellules[0].size();
+            vector<vector<Cellule*>> nouvelleGrille(hauteur, vector<Cellule*>(largeur, nullptr));
+            for(int i=0; i<hauteur; i++){
+                for(int j=0; j<largeur; j++){
+                    int voisins = 0;
+                    for(int dx=-1; dx<=1; dx++){
+                        for(int dy=-1; dy<=1; dy++){
+                            if(dx==0 && dy==0) continue;
+                            int nx = (i + dx + hauteur) % hauteur;
+                            int ny = (j + dy + largeur) % largeur;
+                            if(TotalCellules[nx][ny]->estVivante())
+                                voisins++;
                         }
                     }
-                    if(2<= compteur_voisins<= 3){
-                        delete TotalCellules[i][j];
-                        CelluleVivante *a = new CelluleVivante(i, j);
-                        TotalCellules[i][j] = a;
-                    }
-                    if(compteur_voisins <= 1 || compteur_voisins >=4){
-                        delete TotalCellules[i][j];
-                        CelluleMorte *a = new CelluleMorte(i, j);
-                        TotalCellules[i][j] = a;                        
+                    TotalCellules[i][j]->setVoisins(voisins);
+                    if(TotalCellules[i][j]->estVivante()){
+                        if(voisins == 2 || voisins == 3)
+                            nouvelleGrille[i][j] = new CelluleVivante(i, j);
+                        else
+                            nouvelleGrille[i][j] = new CelluleMorte(i, j);
+                    } else {
+                        if(voisins == 3)
+                            nouvelleGrille[i][j] = new CelluleVivante(i, j);
+                        else
+                            nouvelleGrille[i][j] = new CelluleMorte(i, j);
                     }
                 }
             }
+            // Supprimer l'ancienne grille pour éviter fuite mémoire
+            for(int i=0; i<hauteur; i++){
+                for(int j=0; j<largeur; j++){
+                    delete TotalCellules[i][j];
+                }
+            }
+
+            TotalCellules = nouvelleGrille;
             return TotalCellules;
         }
-        
 };
 
 #endif

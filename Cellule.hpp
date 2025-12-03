@@ -5,8 +5,6 @@
 #include <stdlib.h>
 #include <string>
 #include <iostream>
-#include "grille.hpp"
-#include "CalculEtatCellule.hpp"
 using namespace std;
 
 class Cellule{
@@ -16,20 +14,14 @@ class Cellule{
         int coordonneeY;
     public:
         Cellule(int X, int Y) : coordonneeX(X), coordonneeY(Y) {};
-        int *getCoordonnees(){
-            cout << "Coordonnées X : " << coordonneeX << endl;
-            cout << "Coordonnées Y : " <<  coordonneeY << endl;
-            int tab_coo [2] = {coordonneeX, coordonneeY};
-            return tab_coo;
-        }
         void setCoordonnees(int x, int y){
             coordonneeX = x;
             coordonneeY = y;
         }
-        virtual bool estVivante(){}
-        virtual int getVoisins(){}
+        virtual bool estVivante() = 0;
+        virtual int getVoisins() = 0;
         bool setVoisins(int x){
-            if(0 <= x <= 8){
+            if(0 <= x && x <= 8){
                 voisins = x;
                 return true;
             }
