@@ -1,9 +1,12 @@
+#ifndef GRILLE_HPP
+#define GRILLE_HPP
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
 #include <iostream>
 #include "Cellule.hpp"
+#include "CalculEtatCellule.hpp"
 #include <time.h>
 using namespace std;
 
@@ -33,6 +36,9 @@ class Grille{
                 }
             }
         }/*Constructeur avec tableau de cellules aléatoirement définies*/
+        vector<vector<Cellule*>> getGrille(){
+            return cellules;
+        }
         void miseAJour(vector <vector <Cellule*>> nouvtab){
             if(nouvtab.size() == hauteur_grille && nouvtab[0].size() == largeur_grille){
                 cellules = nouvtab;
@@ -43,12 +49,24 @@ class Grille{
         }/*Met a jour le tableau de vecteurs contenu dans la classe*/
         void affichage(){} /*Je te laisse le soin de voir comment tu veux l'implémenter Nathan.*/
         void reinitialiserGrille(){
-            for(int i =0; i<=cellules.size(); i++){
-                for(int j=0; j<=cellules[i].size(); j++){
+            for(int i =0; i<cellules.size(); i++){
+                for(int j=0; j<cellules[i].size(); j++){
                     delete cellules[i][j];
                     CelluleMorte *a = new CelluleMorte(i, j);
                     cellules[i][j] = a;
                 }
             }
         }/*Réinitialise la grille pour la rendre vide (que des cellules mortes)*/
+        int ResteCellulesVivantes(){
+            int compteur_vivantes = 0;
+            for(vector<Cellule*> x : cellules){
+                for(Cellule* y : x){
+                    if (y->estVivante()){
+                        compteur_vivantes ++;
+                    }
+                }
+            }
+            return compteur_vivantes;
+        }/*Renvoie le nombre de cellules vivantes sur grille.*/
 };
+#endif
