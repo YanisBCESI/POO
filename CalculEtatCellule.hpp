@@ -52,7 +52,6 @@ class CalculEtatCellule{
                     delete TotalCellules[i][j];
                 }
             }
-
             TotalCellules = nouvelleGrille;
             return TotalCellules;
         }

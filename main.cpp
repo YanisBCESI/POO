@@ -6,7 +6,9 @@
 #include "Cellule.hpp"
 #include "grille.hpp"
 #include "CalculEtatCellule.hpp"
+#include "ChargeFichier.hpp"
 #include "Affichage.hpp"
+#include "verif.hpp"
 using namespace std;
 
 vector<vector<Cellule *>> jeu_vie = {{new CelluleMorte(0, 0), new CelluleMorte(1, 0),new CelluleMorte(2, 0),new CelluleMorte(3, 0),new CelluleMorte(4, 0),new CelluleMorte(5, 0),new CelluleMorte(6, 0),new CelluleMorte(7, 0),new CelluleMorte(8, 0),new CelluleMorte(9, 0)},
@@ -24,15 +26,64 @@ vector<vector<Cellule *>> jeu_vie = {{new CelluleMorte(0, 0), new CelluleMorte(1
 
 int main(){
     srand(time(NULL));
-    Grille grille_jeu = {100, 100};
+    string nomfichier;
+    cout << "Nom du fichier (sensible a la case) : ";
+    cin >> nomfichier;
+    ChargeurGrille loader;
+    Grille grille_jeu = loader.chargerDepuisFichier(nomfichier);
     CalculEtatCellule calculateur = {grille_jeu.getGrille()};
-    FenetreAffichage fenetre = {grille_jeu.getHauteur(), grille_jeu.getLargeur(), "Jeu de la vie"};
-    while(fenetre.estOuverte()){
-        fenetre.afficher(grille_jeu.getGrille());
-        calculateur.SetTotalCellules(grille_jeu.getGrille());
-        auto stock = calculateur.CalculGrille();
-        grille_jeu.miseAJour(stock);
-        sf::sleep(sf::milliseconds(100));
+    int mode;
+    cout << "Quel mode souhaitez-vous lancer  : \n [1] Mode console \n [2] Mode graphique." << endl;
+    cin >> mode;
+    if(mode == 1){
+        int it;
+        string ans;
+        cout << "Voulez-vous lancer le mode test ? o/n (sensible a la case)." << endl;;
+        cin >> ans;
+        if(ans == "o"){
+            string fichier_test;
+            cout << "Quel est votre fichier de test ? (sensible a la case)." << endl;
+            cin >> fichier_test;
+            Grille grille_test = loader.chargerDepuisFichier(fichier_test);
+            cout << "Quel est le nombre d'itérations souhaité ?" << endl;
+            cin >> it;
+            for(int i = 0; i <= it; i++){
+                calculateur.SetTotalCellules(grille_jeu.getGrille());
+                auto stock = calculateur.CalculGrille();
+                grille_jeu.miseAJour(stock);
+            }
+            Verif testeur(grille_jeu.getGrille(), grille_test.getGrille());
+            if(testeur.estMeme()){
+                cout << "Les deux fichiers sont identiques, le code a été correctement exécuté.";
+            }
+            else{
+                cout << "Les deux fichiers ne sont pas identiques, erreur d'exécution du code.";
+            }
+        }
+        else{
+            cout << "Donnez le nombre d'itérations voulues pour l'exécution." << endl;
+            cin >> it;
+            for(int i = 0; i <= it; i++){
+                calculateur.SetTotalCellules(grille_jeu.getGrille());
+                auto stock = calculateur.CalculGrille();
+                grille_jeu.miseAJour(stock);
+            }
+            loader.chargerDansFichier(nomfichier, grille_jeu.getGrille());
+        }
+    }
+    if(mode == 2){
+        FenetreAffichage fenetre = {grille_jeu.getHauteur(), grille_jeu.getLargeur(), "Jeu de la vie"};
+        while(fenetre.estOuverte()){
+            if(grille_jeu.ResteCellulesVivantes() == 0){
+                fenetre.fermer();
+                return 0;
+            }
+            fenetre.afficher(grille_jeu.getGrille());
+            calculateur.SetTotalCellules(grille_jeu.getGrille());
+            auto stock = calculateur.CalculGrille();
+            grille_jeu.miseAJour(stock);
+            sf::sleep(sf::milliseconds(1000));
+        }
     }
     return 0;
 }
