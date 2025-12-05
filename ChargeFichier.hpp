@@ -19,7 +19,7 @@ public:
         }
 
         int hauteur, largeur;
-        fichier >> hauteur >> largeur;
+        fichier >> largeur >> hauteur;
 
         vector<vector<Cellule*>> grille(largeur, vector<Cellule*>(hauteur, nullptr));
 

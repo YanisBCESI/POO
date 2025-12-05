@@ -20,23 +20,6 @@ class Grille{
             this -> hauteur_grille = cells.size();
             this -> largeur_grille = cells[0].size();
         } /*Constructeur avec tableau de cellules prédéfinies*/
-        Grille(int h, int l) : hauteur_grille(h), largeur_grille(l) {
-            for(int i = 0; i < h; i++){
-                cellules.push_back(vector<Cellule*>());
-                for(int j =0; j<l; j++){
-                    int state = rand() %4;
-                    if(state != 0){
-                        CelluleMorte *a = new CelluleMorte(i, j);
-                        cellules[i].push_back(a);
-                    }
-                    if(state == 0){
-                        CelluleVivante *a = new CelluleVivante(i, j);
-                        cellules[i].push_back(a);
-
-                    }
-                }
-            }
-        }/*Constructeur avec tableau de cellules aléatoirement définies*/
         vector<vector<Cellule*>> &getGrille(){
             return cellules;
         }
